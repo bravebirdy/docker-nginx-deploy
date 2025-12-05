@@ -1,16 +1,20 @@
 #!/bin/bash
 
-# Exit on error, undefined variables, and pipe failures
-set -euo pipefail
+# Exit on error and pipe failures (temporarily disable -u for BASH_SOURCE check)
+set -eo pipefail
 
 # Get the directory where this script is located
 # If script is executed via curl, use current directory or /tmp
-if [ -f "${BASH_SOURCE[0]}" ]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]:-}"
+if [ -n "${SCRIPT_SOURCE}" ] && [ -f "${SCRIPT_SOURCE}" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_SOURCE}")" && pwd)"
 else
     # Script executed via curl, use current directory or /tmp
     SCRIPT_DIR="${PWD:-/tmp}"
 fi
+
+# Re-enable strict mode (including -u for undefined variables)
+set -euo pipefail
 
 # GitHub repository URL (can be overridden by GITHUB_REPO env variable)
 # Default: extract from script URL if available, or use default
