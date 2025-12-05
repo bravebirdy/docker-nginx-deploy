@@ -30,25 +30,29 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
     curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy.sh | bash
     ```
 
-    ## 🔧 Individual Script Execution
+## 🔧 Individual Script Execution
 
-    You can also run the scripts individually if you only need to perform specific tasks:
+You can also run the scripts individually if you only need to perform specific tasks:
 
-    **Deploy Docker containers only:**
+**Deploy Docker containers only:**
 
-    ```bash
-    curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-docker.sh | bash
-    ```
+```bash
+curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-docker.sh | bash
+```
 
-    **Setup Nginx and SSL only:**
+**Setup Nginx and SSL only:**
 
-    ```bash
-    curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-domain-ssl.sh | bash
-    ```
-    
-    **Note:** When running scripts individually, ensure your `.env` file is in the current working directory.
+```bash
+curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-domain-ssl.sh | bash
+```
 
+**Remove deployment (cleanup):**
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/cleanup.sh | bash
+```
+
+> **Note:** When running scripts individually, ensure your `.env` file is in the current working directory.
 
 ## 📋 What the Script Does
 
@@ -64,6 +68,11 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
    - Installs `certbot` if needed
    - Requests & configures Let's Encrypt SSL certificates
    - Sets up HTTPS redirect
+
+3. **Cleanup (cleanup.sh)**
+   - Stops and removes Docker containers and volumes
+   - Removes Nginx configuration file
+   - Revokes and removes SSL certificates
 
 - **Logs:** `./logs/docker.log`  
 - **Nginx config:** `/etc/nginx/conf.d/${DOMAIN_NAME}.conf`  
