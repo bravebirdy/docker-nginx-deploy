@@ -4,7 +4,6 @@
 set -euo pipefail
 
 # Configuration paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 CERTBOT_WEBROOT="/var/www/certbot"
 LETSENCRYPT_LIVE="/etc/letsencrypt/live"
@@ -13,14 +12,14 @@ LETSENCRYPT_LIVE="/etc/letsencrypt/live"
 echo "🔍 Validating environment configuration..."
 
 # Check if .env file exists
-if [ ! -f "${SCRIPT_DIR}/.env" ]; then
-    echo "❌ Error: .env file not found in ${SCRIPT_DIR}" >&2
+if [ ! -f ".env" ]; then
+    echo "❌ Error: .env file not found in current directory" >&2
     exit 1
 fi
 
 # Source environment variables
 set +u
-source "${SCRIPT_DIR}/.env"
+source ".env"
 set -u
 
 # Validate required variables

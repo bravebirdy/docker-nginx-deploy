@@ -3,19 +3,16 @@
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Configuration variables
 
 LOG_PATH="./logs/docker.log"
 
 # Load environment variables from .env file if it exists
 # PROJECT_NAME will use value from .env or default to project directory name
-if [ -f "${SCRIPT_DIR}/.env" ]; then
+if [ -f ".env" ]; then
     # Temporarily allow unset variables for source
     set +u
-    source "${SCRIPT_DIR}/.env"
+    source ".env"
     set -u
 fi
 

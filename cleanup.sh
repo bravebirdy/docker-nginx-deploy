@@ -3,21 +3,18 @@
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Configuration paths
 NGINX_CONF_DIR="/etc/nginx/conf.d"
 LETSENCRYPT_LIVE="/etc/letsencrypt/live"
 
 # Load environment variables from .env file if it exists
-if [ -f "${SCRIPT_DIR}/.env" ]; then
+if [ -f ".env" ]; then
     # Temporarily allow unset variables for source
     set +u
-    source "${SCRIPT_DIR}/.env"
+    source ".env"
     set -u
 else
-    echo "⚠️  Warning: .env file not found in ${SCRIPT_DIR}" >&2
+    echo "⚠️  Warning: .env file not found in current directory" >&2
     echo "Some cleanup operations may be skipped." >&2
 fi
 
