@@ -12,7 +12,7 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
 
 ## 🚀 Quick Start
 
-1. **Prepare `.env` file** in your project root:
+1. **Prepare `.env` file** in your project root (the directory where you run the deployment command):
 
     ```env
     PROJECT_NAME=your-project-name      # Docker Compose project name
@@ -29,8 +29,6 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
     ```bash
     curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy.sh | bash
     ```
-
-   > The script will download all dependencies (`deploy-docker.sh` and `deploy-domain-ssl.sh`). Write permissions are required in the current directory.
 
 ## 📋 What the Script Does
 
@@ -75,7 +73,7 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
 - Ensure firewall allows ports 80 & 443
 - Sudo necessary for Nginx and SSL setup
 - First certificate issuance may take a few minutes
-- Certificates auto-renew (valid 90 days)
+- Certificates are valid for 90 days (ensure certbot auto-renewal is configured via system cron)
 
 ## 🔍 Troubleshooting
 
