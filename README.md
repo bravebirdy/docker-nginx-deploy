@@ -19,9 +19,10 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
     DOMAIN_NAME=yourdomain.com          # Your domain (should resolve to this server)
     PORT=8000                           # Internal container port
     SSL_EMAIL=admin@yourdomain.com      # (Optional) Email for SSL
+    COMPOSE_FILE_PATH=docker-compose.yaml    # (Optional) docker-compose.yaml path
     ```
 
-2. **Ensure a `docker-compose.yaml` file** is present in your root directory.
+2. **Ensure a `docker-compose.yaml` file** exists (or specify its path via `COMPOSE_FILE_PATH` in `.env`).
 
 3. **One-command deployment**:
 
@@ -66,6 +67,7 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
 | PORT            | Yes       | `8000`                   |
 | PROJECT_NAME    | No        | `docker-project`         |
 | SSL_EMAIL       | No        | `admin@${DOMAIN_NAME}`   |
+| COMPOSE_FILE_PATH | No     | `docker-compose.yaml`    |
 
 ## ⚠️ Notes
 

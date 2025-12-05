@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Configuration variables
-COMPOSE_FILE="docker-compose.yaml"
+
 LOG_PATH="./logs/docker.log"
 
 # Load environment variables from .env file if it exists
@@ -21,6 +21,16 @@ fi
 
 # Set PROJECT_NAME from .env or use default
 PROJECT_NAME="${PROJECT_NAME:-docker-project}"
+
+# Set COMPOSE_FILE_PATH from .env or use default
+COMPOSE_FILE_PATH="${COMPOSE_FILE_PATH:-docker-compose.yaml}"
+
+# Check if COMPOSE_FILE_PATH exists
+if [ ! -f "$COMPOSE_FILE_PATH" ]; then
+    echo "❌ Error: Docker Compose file not found: $COMPOSE_FILE_PATH" >&2
+    echo "Please ensure the file exists or set COMPOSE_FILE_PATH in .env file" >&2
+    exit 1
+fi
 
 # Create logs directory if it does not exist
 mkdir -p "$(dirname "$LOG_PATH")"
@@ -36,33 +46,33 @@ log "🚀 Start deployment..."
 # Display configuration
 log "📋 Configuration:"
 log "   Project name: $PROJECT_NAME"
-log "   Compose file: $COMPOSE_FILE"
+log "   Compose file: $COMPOSE_FILE_PATH"
 log "   Log path: $LOG_PATH"
 
 # Step 1: Stop old containers (ignore errors if containers don't exist)
 log "🛑 Stopping old containers..."
-docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" down || true
+docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" down || true
 
 # Step 2: Build Docker image (without cache to ensure fresh build)
 log "🔨 Building image..."
-docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" build --no-cache
+docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" build --no-cache
 
 # Step 3: Start services in detached mode
 log "▶️  Starting service..."
-docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" up -d
+docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" up -d
 
 # Step 4: Wait for services to start and verify deployment
 log "⏳ Waiting for services to start..."
 sleep 5
 
 # Check if containers are running
-if docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" ps | grep -q "Up"; then
+if docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" ps | grep -q "Up"; then
     log "✅ Deployment succeeded!"
     # Display container status
-    docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" ps
+    docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" ps
 else
     log "❌ Deployment failed"
     # Show recent logs for debugging
-    docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" logs --tail=50
+    docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" logs --tail=50
     exit 1
 fi
