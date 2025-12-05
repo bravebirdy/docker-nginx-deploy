@@ -30,6 +30,26 @@ A simple, all-in-one script for deploying Docker containers, setting up Nginx re
     curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy.sh | bash
     ```
 
+    ## 🔧 Individual Script Execution
+
+    You can also run the scripts individually if you only need to perform specific tasks:
+
+    **Deploy Docker containers only:**
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-docker.sh | bash
+    ```
+
+    **Setup Nginx and SSL only:**
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/deploy-domain-ssl.sh | bash
+    ```
+    
+    **Note:** When running scripts individually, ensure your `.env` file is in the current working directory.
+
+
+
 ## 📋 What the Script Does
 
 1. **Docker Deployment**
