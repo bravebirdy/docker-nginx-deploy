@@ -29,6 +29,19 @@ if [ ! -f "$COMPOSE_FILE_PATH" ]; then
     exit 1
 fi
 
+# Check if PORT is set
+if [ -z "${PORT:-}" ]; then
+    echo "❌ Error: PORT not found in .env" >&2
+    exit 1
+fi
+
+# Check if PORT is available
+if sudo lsof -i :${PORT} >/dev/null 2>&1; then
+    echo "❌ Error: Port ${PORT} is already in use" >&2
+    exit 1
+fi
+
+
 # Create logs directory if it does not exist
 mkdir -p "$(dirname "$LOG_PATH")"
 

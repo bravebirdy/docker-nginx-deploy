@@ -46,6 +46,14 @@ if ! [[ "${PORT}" =~ ^[0-9]+$ ]] || [ "${PORT}" -lt 1 ] || [ "${PORT}" -gt 65535
     exit 1
 fi
 
+
+# Check if the Port is available
+if sudo lsof -i :${PORT} >/dev/null 2>&1; then
+    echo "❌ Error: Port ${PORT} is already in use" >&2
+    exit 1
+fi
+
+
 # Set email for SSL certificate
 EMAIL="${SSL_EMAIL:-admin@${DOMAIN_NAME}}"
 NGINX_CONF="${NGINX_CONF_DIR}/${DOMAIN_NAME}.conf"

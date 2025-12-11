@@ -1,0 +1,14 @@
+services:
+  fastapi:
+    container_name: ${PROJECT_NAME:-docker-project-name}
+    env_file:
+      - .env
+    build: .
+    ports:
+      - "${PORT}:8000"
+    volumes:
+      - ./logs:/app/logs  # When writing /app/logs/log.log in the container, the file will be saved to ./logs/log.log on the host
+      - ./.env:/app/.env:ro  # Optional: if you need to read .env inside the container
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1  # Ensure logs are output in real time

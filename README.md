@@ -54,6 +54,13 @@ curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main
 
 > **Note:** When running scripts individually, ensure your `.env` file is in the current working directory.
 
+
+**Download docker-compose.yaml and Dockerfile:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/bravebirdy/docker-nginx-deploy/main/download-docker-files.sh | bash
+```
+
 ## 📋 What the Script Does
 
 1. **Docker Deployment**
