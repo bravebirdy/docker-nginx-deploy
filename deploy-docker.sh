@@ -35,13 +35,6 @@ if [ -z "${PORT:-}" ]; then
     exit 1
 fi
 
-# Check if PORT is available
-if sudo lsof -i :${PORT} >/dev/null 2>&1; then
-    echo "❌ Error: Port ${PORT} is already in use" >&2
-    exit 1
-fi
-
-
 # Create logs directory if it does not exist
 mkdir -p "$(dirname "$LOG_PATH")"
 
@@ -62,6 +55,15 @@ log "   Log path: $LOG_PATH"
 # Step 1: Stop old containers (ignore errors if containers don't exist)
 log "🛑 Stopping old containers..."
 docker compose -f "$COMPOSE_FILE_PATH" -p "$PROJECT_NAME" down || true
+
+
+# Check if PORT is available
+if sudo lsof -i :${PORT} >/dev/null 2>&1; then
+    echo "❌ Error: Port ${PORT} is already in use" >&2
+    exit 1
+fi
+
+
 
 # Step 2: Build Docker image (without cache to ensure fresh build)
 log "🔨 Building image..."
