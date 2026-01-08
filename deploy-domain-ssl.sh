@@ -8,6 +8,38 @@ NGINX_CONF_DIR="/etc/nginx/conf.d"
 CERTBOT_WEBROOT="/var/www/certbot"
 LETSENCRYPT_LIVE="/etc/letsencrypt/live"
 
+# Safely load specific environment variables from .env file
+# This function only extracts the variables we need, avoiding issues with JSON arrays
+load_env_vars() {
+    if [ -f ".env" ]; then
+        # Use awk to properly parse key=value pairs, handling quotes and comments
+        while IFS= read -r line; do
+            # Skip empty lines and comments
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+            
+            # Extract key and value using awk (handles quoted values and trailing comments)
+            key=$(echo "$line" | awk -F'=' '{print $1}' | xargs)
+            value=$(echo "$line" | awk -F'=' '{for(i=2;i<=NF;i++){if(i>2)printf "=";printf "%s",$i}}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            
+            # Remove inline comments (everything after # that's not in quotes)
+            value=$(echo "$value" | sed 's/#.*$//' | xargs)
+            
+            # Remove surrounding quotes if present
+            if [[ "$value" =~ ^\".*\"$ ]] || [[ "$value" =~ ^\'.*\'$ ]]; then
+                value="${value:1:-1}"
+            fi
+            
+            # Only process the variables we actually need
+            case "$key" in
+                DOMAIN_NAME|PORT|SSL_EMAIL)
+                    export "$key=$value"
+                    ;;
+            esac
+        done < <(grep -E "^(DOMAIN_NAME|PORT|SSL_EMAIL)=" .env 2>/dev/null || true)
+    fi
+}
+
+
 # Validate environment variables
 echo "🔍 Validating environment configuration..."
 
@@ -17,10 +49,8 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Source environment variables
-set +u
-source ".env"
-set -u
+# Load environment variables
+load_env_vars
 
 # Validate required variables
 if [ -z "${DOMAIN_NAME:-}" ]; then

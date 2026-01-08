@@ -7,14 +7,39 @@ set -euo pipefail
 
 LOG_PATH="./logs/docker.log"
 
-# Load environment variables from .env file if it exists
-# PROJECT_NAME will use value from .env or default to project directory name
-if [ -f ".env" ]; then
-    # Temporarily allow unset variables for source
-    set +u
-    source ".env"
-    set -u
-fi
+# Safely load specific environment variables from .env file
+# This function only extracts the variables we need, avoiding issues with JSON arrays
+load_env_vars() {
+    if [ -f ".env" ]; then
+        # Use awk to properly parse key=value pairs, handling quotes and comments
+        while IFS= read -r line; do
+            # Skip empty lines and comments
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+            
+            # Extract key and value using awk (handles quoted values and trailing comments)
+            key=$(echo "$line" | awk -F'=' '{print $1}' | xargs)
+            value=$(echo "$line" | awk -F'=' '{for(i=2;i<=NF;i++){if(i>2)printf "=";printf "%s",$i}}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            
+            # Remove inline comments (everything after # that's not in quotes)
+            value=$(echo "$value" | sed 's/#.*$//' | xargs)
+            
+            # Remove surrounding quotes if present
+            if [[ "$value" =~ ^\".*\"$ ]] || [[ "$value" =~ ^\'.*\'$ ]]; then
+                value="${value:1:-1}"
+            fi
+            
+            # Only process the variables we actually need
+            case "$key" in
+                PROJECT_NAME|COMPOSE_FILE_PATH|PORT)
+                    export "$key=$value"
+                    ;;
+            esac
+        done < <(grep -E "^(PROJECT_NAME|COMPOSE_FILE_PATH|PORT)=" .env 2>/dev/null || true)
+    fi
+}
+
+# Load environment variables
+load_env_vars
 
 # Set PROJECT_NAME from .env or use default
 PROJECT_NAME="${PROJECT_NAME:-docker-project}"
